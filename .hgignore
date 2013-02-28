@@ -1,0 +1,17 @@
+syntax: glob
+lib/
+bin/
+include/
+man/
+build/
+dist/
+docs/build
+MANIFEST
+.coverage
+.noseids
+nosetests.xml
+coverage.xml
+*.pyc
+.DS_Store
+*.egg
+*.egg-info

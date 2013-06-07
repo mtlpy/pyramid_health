@@ -1,0 +1,6 @@
+coverage
+mock
+nose
+nosexcover
+yanc
+webtest

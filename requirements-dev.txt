@@ -1,13 +1,2 @@
-# build deps
 d2to1
-
-# test deps
-coverage
-mock
-nose
-nosexcover
-yanc
-webtest
-
-# doc deps
-sphinx
+-r requirements-test.txt

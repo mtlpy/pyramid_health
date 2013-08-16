@@ -1,2 +1,4 @@
 Development
 -----------
+
+* Add option to enable maintenance mode when a file exists

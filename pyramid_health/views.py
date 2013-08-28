@@ -13,8 +13,8 @@ def health(request):
     """
     settings = request.registry.settings
 
-    if 'health.maintenance.file' in settings:
-        if os.path.exists(settings['health.maintenance.file']):
+    if 'healthcheck.disablefile' in settings:
+        if os.path.exists(settings['healthcheck.disablefile']):
             return HTTPServiceUnavailable()
 
     return Response('OK', content_type='text/plain')

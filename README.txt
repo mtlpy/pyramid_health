@@ -31,7 +31,7 @@ Configuration options
 =====================
 
 
-health.maintenance.file ::
+healthcheck.disablefile ::
 
    Enable maintenance mode depending on the existance of a file.
    In maintenance mode, the health view responds with a 503 HTTP code.

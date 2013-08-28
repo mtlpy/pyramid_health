@@ -33,7 +33,7 @@ class TestHealthMaintenance(unittest.TestCase):
     maxDiff = None
 
     def setUp(self):
-        settings = {'health.maintenance.file': '/maintenance/file/test'}
+        settings = {'healthcheck.disablefile': '/maintenance/file/test'}
         config = Configurator(settings=settings)
         config.include('pyramid_health')
         self.app = webtest.TestApp(config.make_wsgi_app())

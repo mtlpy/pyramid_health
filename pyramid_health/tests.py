@@ -47,6 +47,8 @@ class TestHealthMaintenance(unittest.TestCase):
         m_exists.assert_called_with('/maintenance/file/test')
 
         self.assertEqual(response.status_int, 503)
+        self.assertIn(b'Healthcheck disabled by config',
+                      response.body)
 
     @mock.patch("os.path.exists")
     def test_get_maintenance_off(self, m_exists):

@@ -15,6 +15,7 @@ def health(request):
 
     if 'healthcheck.disablefile' in settings:
         if os.path.exists(settings['healthcheck.disablefile']):
-            return HTTPServiceUnavailable()
+            return HTTPServiceUnavailable(
+                explanation='Healthcheck disabled by config')
 
     return Response('OK', content_type='text/plain')

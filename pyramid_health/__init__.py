@@ -1,8 +1,20 @@
-def includeme(config):
-    """Configure a route and view for AWS ELB health check.
+import os
 
-    The route name and URI pattern are not configurable for now,
-    please open a feature request if you need that.
-    """
+from pyramid.response import Response
+from pyramid.httpexceptions import HTTPServiceUnavailable
+
+
+def includeme(config):
     config.add_route('healthcheck', '/health')
-    config.scan('pyramid_health.views')
+    config.add_view(health, route_name='healthcheck')
+
+
+def health(request):
+    settings = request.registry.settings
+
+    if 'healthcheck.disablefile' in settings:
+        if os.path.exists(settings['healthcheck.disablefile']):
+            return HTTPServiceUnavailable(
+                explanation='Healthcheck disabled by config')
+
+    return Response('OK', content_type='text/plain')

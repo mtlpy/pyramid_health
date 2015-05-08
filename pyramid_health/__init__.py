@@ -47,13 +47,15 @@ def includeme(config):
             request.response.status_code = maintenance_code
             return 'MAINTENANCE'
 
-        event = HealthCheckEvent()
-        request.registry.notify(event)
+        checks_param = request.params.get('checks')
+        if checks_param and checks_param.lower() in ['true', 'all']:
+            event = HealthCheckEvent()
+            request.registry.notify(event)
 
-        if event.status == 'ERROR':
-            log.error("Health response: ERROR (%s)", event.checks)
-            request.response.status_code = failure_code
-            return 'ERROR'
+            if event.status == 'ERROR':
+                log.error("Health response: ERROR (%s)", event.checks)
+                request.response.status_code = failure_code
+                return 'ERROR'
 
         return 'OK'
 

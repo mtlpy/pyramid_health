@@ -92,9 +92,22 @@ class TestChecks(unittest.TestCase):
 
         self.app = webtest.TestApp(config.make_wsgi_app())
 
+    def test_param(self):
+        self.setup()
+        self.check1_status = 'NOK'
+
+        response = self.app.get('/health?checks=all', status=503)
+        self.assertEqual(response.body, 'ERROR')
+
+        response = self.app.get('/health?checks=true', status=503)
+        self.assertEqual(response.body, 'ERROR')
+
+        response = self.app.get('/health', status=200)
+        self.assertEqual(response.body, 'OK')
+
     def test_ok(self):
         self.setup()
-        response = self.app.get('/health', status=200)
+        response = self.app.get('/health?checks=all', status=200)
         self.assertEqual(response.body, 'OK')
 
     def test_check1_nok(self):
@@ -102,7 +115,7 @@ class TestChecks(unittest.TestCase):
         self.check1_status = 'NOK'
         self.check1_message = 'kaputt!'
 
-        response = self.app.get('/health', status=503)
+        response = self.app.get('/health?checks=all', status=503)
         self.assertEqual(response.body, 'ERROR')
 
     def test_check2_nok(self):
@@ -110,7 +123,7 @@ class TestChecks(unittest.TestCase):
         self.check2_status = 'NOK'
         self.check2_message = 'nope'
 
-        response = self.app.get('/health', status=503)
+        response = self.app.get('/health?checks=all', status=503)
         self.assertEqual(response.body, 'ERROR')
 
     def test_no_message(self):
@@ -118,7 +131,7 @@ class TestChecks(unittest.TestCase):
         self.check2_status = 'NOK'
         self.check2_message = None
 
-        response = self.app.get('/health', status=503)
+        response = self.app.get('/health?checks=all', status=503)
         self.assertEqual(response.body, 'ERROR')
 
     def test_all_nok(self):
@@ -126,7 +139,7 @@ class TestChecks(unittest.TestCase):
         self.check1_status = 'NOK'
         self.check2_status = 'NOK'
 
-        response = self.app.get('/health', status=503)
+        response = self.app.get('/health?checks=all', status=503)
         self.assertEqual(response.body, 'ERROR')
 
     def test_nok_failure_code(self):
@@ -134,5 +147,5 @@ class TestChecks(unittest.TestCase):
 
         self.check1_status = 'NOK'
 
-        response = self.app.get('/health', status=500)
+        response = self.app.get('/health?checks=all', status=500)
         self.assertEqual(response.body, 'ERROR')

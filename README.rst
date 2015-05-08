@@ -67,14 +67,23 @@ Operation
 When your application is healthy, pyramid_health endpoint returns ``200 OK``.
 When you enable the maintenance mode, the endpoint returns ``503 MAINTENANCE``
 and logs ``Health response: MAINTENANCE``.
-If at least one application check return an error, the endpoint returns
+If the request to the healthcheck endpoint asks for the application checks, and
+one application check or more return an error, the endpoint returns
 ``503 ERROR`` and logs ``Health response: ERROR (<all-check-results>)``.
 
 
 Application checks
 ==================
 
-To add an application check:
+The application checks are routines in your application that subscribe to
+``pyramid_health.HealthCheckEvent`` event, execute a specific health check and
+report the outcome as a status (``OK`` or ``ERROR``) and an optional message.
+
+The application checks are not called unless you explicitely request it with
+the request param ``checks`` set to ``true`` or ``all`` (like:
+``GET /health?checks=all``)
+
+To add an application check in your application:
 
 .. code-block:: python
 
@@ -90,7 +99,6 @@ To add an application check:
            event.report(name='db', status='NOK', message='ping failed')
        else:
            event.report(name='db', status='OK')
-
 
 Notes:
 

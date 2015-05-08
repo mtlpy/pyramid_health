@@ -4,6 +4,13 @@ Changelog
 Development
 -----------
 
+* Add application checks
+* Add setting to change the health check url
+* Add setting to change the maintenance response code
+* Add setting to change the failure response code
+* Add logging for maintenance and failure
+* Update documentation
+* Tests on Drone.io
 
 
 0.3

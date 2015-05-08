@@ -1,62 +1,160 @@
 import unittest
-import mock
+import tempfile
 
 import webtest
 from pyramid.config import Configurator
 
 
-class TestHealth(unittest.TestCase):
+class TestSimple(unittest.TestCase):
 
-    maxDiff = None
+    def setup(self, url=None, maintenance_code=None, failure_code=None,
+              disablefile=None):
 
-    def setUp(self):
-        settings = {}
-        config = Configurator(settings=settings)
+        config = Configurator()
+
+        if url is not None:
+            config.add_settings({'healthcheck.url': url})
+        if maintenance_code is not None:
+            config.add_settings(
+                {'healthcheck.maintenance_code': maintenance_code})
+        if disablefile is not None:
+            config.add_settings({'healthcheck.disablefile': disablefile})
+
         config.include('pyramid_health')
+
         self.app = webtest.TestApp(config.make_wsgi_app())
 
     def test_get(self):
-        response = self.app.get('/health')
-
-        self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.body, b'OK')
+        self.setup()
+        response = self.app.get('/health', status=200)
+        self.assertEqual(response.body, 'OK')
 
     def test_post(self):
-        response = self.app.post('/health')
+        self.setup()
+        response = self.app.post('/health', status=200)
+        self.assertEqual(response.body, 'OK')
 
-        self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.body, b'OK')
+    def test_url_get(self):
+        self.setup(url='/whatsup')
+        response = self.app.get('/whatsup', status=200)
+        self.assertEqual(response.body, 'OK')
+
+    def test_get_maintenance_on(self):
+        tmpfile = tempfile.NamedTemporaryFile()
+        self.setup(disablefile=tmpfile.name)
+
+        response = self.app.get('/health', status=503)
+        self.assertEqual(response.body, 'MAINTENANCE')
+
+    def test_get_maintenance_on_code(self):
+        tmpfile = tempfile.NamedTemporaryFile()
+        self.setup(disablefile=tmpfile.name, maintenance_code=299)
+
+        response = self.app.get('/health', status=299)
+        self.assertEqual(response.body, 'MAINTENANCE')
+
+    def test_get_maintenance_off(self):
+        tmpfile = tempfile.NamedTemporaryFile()
+        self.setup(disablefile=tmpfile.name)
+
+        tmpfile.close()  # Remove the disablefile
+
+        response = self.app.get('/health', status=200)
+        self.assertEqual(response.body, 'OK')
 
 
-class TestHealthMaintenance(unittest.TestCase):
 
-    maxDiff = None
+# class TestMaintenance(unittest.TestCase):
 
-    def setUp(self):
-        settings = {'healthcheck.disablefile': '/maintenance/file/test'}
-        config = Configurator(settings=settings)
+#     def setUp(self):
+#         self.tmpfile = tempfile.NamedTemporaryFile()
+#         settings = {'healthcheck.disablefile': self.tmpfile.name}
+
+#         config = Configurator(settings=settings)
+#         config.include('pyramid_health')
+
+#         self.app = webtest.TestApp(config.make_wsgi_app())
+
+#     def test_get_maintenance_on(self):
+#         response = self.app.get('/health', status=503)
+#         self.assertEqual(response.body, 'MAINTENANCE')
+
+#     def test_get_maintenance_off(self):
+#         self.tmpfile.close()  # Remove the disablefile
+#         response = self.app.get('/health', status=200)
+#         self.assertEqual(response.body, 'OK')
+
+
+class TestChecks(unittest.TestCase):
+
+    def setup(self, failure_code=None):
+        from pyramid_health import HealthCheckEvent
+
+        self.check1_status = 'OK'
+        self.check1_message = 'report1'
+
+        def check1(event):
+            event.report_check_result(name='check1',
+                                      status=self.check1_status,
+                                      message=self.check1_message)
+
+        self.check2_status = 'OK'
+        self.check2_message = 'report2'
+
+        def check2(event):
+            event.report_check_result(name='check2',
+                                      status=self.check2_status,
+                                      message=self.check2_message)
+        config = Configurator()
+        if failure_code is not None:
+            config.add_settings({'healthcheck.failure_code': failure_code})
         config.include('pyramid_health')
+        config.add_subscriber(check1, HealthCheckEvent)
+        config.add_subscriber(check2, HealthCheckEvent)
+
         self.app = webtest.TestApp(config.make_wsgi_app())
 
-    @mock.patch("os.path.exists")
-    def test_get_maintenance_on(self, m_exists):
-        m_exists.return_value = True
+    def test_ok(self):
+        self.setup()
+        response = self.app.get('/health', status=200)
+        self.assertEqual(response.body, 'OK')
 
-        response = self.app.get('/health', expect_errors=True)
+    def test_check1_nok(self):
+        self.setup()
+        self.check1_status = 'NOK'
+        self.check1_message = 'kaputt!'
 
-        m_exists.assert_called_with('/maintenance/file/test')
+        response = self.app.get('/health', status=503)
+        self.assertEqual(response.body, 'ERROR')
 
-        self.assertEqual(response.status_int, 503)
-        self.assertIn(b'Healthcheck disabled by config',
-                      response.body)
+    def test_check2_nok(self):
+        self.setup()
+        self.check2_status = 'NOK'
+        self.check2_message = 'nope'
 
-    @mock.patch("os.path.exists")
-    def test_get_maintenance_off(self, m_exists):
-        m_exists.return_value = False
+        response = self.app.get('/health', status=503)
+        self.assertEqual(response.body, 'ERROR')
 
-        response = self.app.get('/health')
+    def test_no_message(self):
+        self.setup()
+        self.check2_status = 'NOK'
+        self.check2_message = None
 
-        m_exists.assert_called_with('/maintenance/file/test')
+        response = self.app.get('/health', status=503)
+        self.assertEqual(response.body, 'ERROR')
 
-        self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.body, b'OK')
+    def test_all_nok(self):
+        self.setup()
+        self.check1_status = 'NOK'
+        self.check2_status = 'NOK'
+
+        response = self.app.get('/health', status=503)
+        self.assertEqual(response.body, 'ERROR')
+
+    def test_nok_failure_code(self):
+        self.setup(failure_code=500)
+
+        self.check1_status = 'NOK'
+
+        response = self.app.get('/health', status=500)
+        self.assertEqual(response.body, 'ERROR')

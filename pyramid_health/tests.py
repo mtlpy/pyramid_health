@@ -63,28 +63,6 @@ class TestSimple(unittest.TestCase):
         self.assertEqual(response.body, 'OK')
 
 
-
-# class TestMaintenance(unittest.TestCase):
-
-#     def setUp(self):
-#         self.tmpfile = tempfile.NamedTemporaryFile()
-#         settings = {'healthcheck.disablefile': self.tmpfile.name}
-
-#         config = Configurator(settings=settings)
-#         config.include('pyramid_health')
-
-#         self.app = webtest.TestApp(config.make_wsgi_app())
-
-#     def test_get_maintenance_on(self):
-#         response = self.app.get('/health', status=503)
-#         self.assertEqual(response.body, 'MAINTENANCE')
-
-#     def test_get_maintenance_off(self):
-#         self.tmpfile.close()  # Remove the disablefile
-#         response = self.app.get('/health', status=200)
-#         self.assertEqual(response.body, 'OK')
-
-
 class TestChecks(unittest.TestCase):
 
     def setup(self, failure_code=None):
@@ -95,16 +73,16 @@ class TestChecks(unittest.TestCase):
 
         def check1(event):
             event.report(name='check1',
-                                      status=self.check1_status,
-                                      message=self.check1_message)
+                         status=self.check1_status,
+                         message=self.check1_message)
 
         self.check2_status = 'OK'
         self.check2_message = 'report2'
 
         def check2(event):
             event.report(name='check2',
-                                      status=self.check2_status,
-                                      message=self.check2_message)
+                         status=self.check2_status,
+                         message=self.check2_message)
         config = Configurator()
         if failure_code is not None:
             config.add_settings({'healthcheck.failure_code': failure_code})

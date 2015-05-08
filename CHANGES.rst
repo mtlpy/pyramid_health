@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Development
------------
+1.1.0 (2015-05-08)
+------------------
 
 * Add a query param to enable application checks (otherwise ignored)
 

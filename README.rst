@@ -87,11 +87,11 @@ To add an application check:
        try:
            db.ping()
        except:
-           event.report_check_result(name='db',
+           event.report(name='db',
                                      status='NOK',
                                      message='ping failed')
        else:
-           event.report_check_result(name='db', status='OK')
+           event.report(name='db', status='OK')
 
 
 Notes:

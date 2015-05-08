@@ -94,7 +94,7 @@ class TestChecks(unittest.TestCase):
         self.check1_message = 'report1'
 
         def check1(event):
-            event.report_check_result(name='check1',
+            event.report(name='check1',
                                       status=self.check1_status,
                                       message=self.check1_message)
 
@@ -102,7 +102,7 @@ class TestChecks(unittest.TestCase):
         self.check2_message = 'report2'
 
         def check2(event):
-            event.report_check_result(name='check2',
+            event.report(name='check2',
                                       status=self.check2_status,
                                       message=self.check2_message)
         config = Configurator()

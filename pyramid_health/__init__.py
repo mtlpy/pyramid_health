@@ -10,7 +10,7 @@ class HealthCheckEvent(object):
     def __init__(self):
         self.checks = []
 
-    def report_check_result(self, name, status, message=None):
+    def report(self, name, status, message=None):
         """ Report the result of an application check
 
         Args:

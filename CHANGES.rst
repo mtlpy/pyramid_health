@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Development
------------
+1.0.0 (2015-05-08)
+------------------
 
 * Add application checks
 * Add setting to change the health check url

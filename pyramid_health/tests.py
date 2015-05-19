@@ -43,14 +43,14 @@ class TestSimple(unittest.TestCase):
         tmpfile = tempfile.NamedTemporaryFile()
         self.setup(disablefile=tmpfile.name)
 
-        response = self.app.get('/health', status=503)
+        response = self.app.get('/health', status=299)
         self.assertEqual(response.body, 'MAINTENANCE')
 
     def test_get_maintenance_on_code(self):
         tmpfile = tempfile.NamedTemporaryFile()
-        self.setup(disablefile=tmpfile.name, maintenance_code=299)
+        self.setup(disablefile=tmpfile.name, maintenance_code=288)
 
-        response = self.app.get('/health', status=299)
+        response = self.app.get('/health', status=288)
         self.assertEqual(response.body, 'MAINTENANCE')
 
     def test_get_maintenance_off(self):

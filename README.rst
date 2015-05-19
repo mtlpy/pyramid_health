@@ -56,7 +56,7 @@ Pyramid_health configuration (values are defaults):
 
    healthcheck.disablefile = /tmp/maintenance  # touch this file to activate
 
-   healthcheck.maintenance_code = 503  # Code to return in maintenance mode
+   healthcheck.maintenance_code = 299  # Code to return in maintenance mode
 
    healthcheck.failure_code = 503  # Code to return when one or more checks fail
 
@@ -65,7 +65,7 @@ Operation
 =========
 
 When your application is healthy, pyramid_health endpoint returns ``200 OK``.
-When you enable the maintenance mode, the endpoint returns ``503 MAINTENANCE``
+When you enable the maintenance mode, the endpoint returns ``299 MAINTENANCE``
 and logs ``Health response: MAINTENANCE``.
 If the request to the healthcheck endpoint asks for the application checks, and
 one application check or more return an error, the endpoint returns
@@ -113,5 +113,5 @@ the HTTP client that this backend is unavailable. Typically a loadbalancer
 polling the backends would stop sending traffic to a backend in maintenance
 mode.
 
-The response status code is ``503 MAINTENANCE`` by default. You can
+The response status code is ``299 MAINTENANCE`` by default. You can
 change it with ``healthcheck.maintenance_code``.

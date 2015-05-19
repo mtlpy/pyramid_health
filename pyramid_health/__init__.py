@@ -38,7 +38,7 @@ def includeme(config):
     settings = config.registry.settings
     url = settings.get('healthcheck.url', '/health')
     disablefile = settings.get('healthcheck.disablefile', False)
-    maintenance_code = int(settings.get('healthcheck.maintenance_code', 503))
+    maintenance_code = int(settings.get('healthcheck.maintenance_code', 299))
     failure_code = int(settings.get('healthcheck.failure_code', 503))
 
     def health(request):

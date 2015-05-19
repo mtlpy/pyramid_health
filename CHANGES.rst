@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Development
------------
+1.2.0 (2015-05-19)
+------------------
 
 * Change the default value for maintenance response code (from 503 to 299)
 

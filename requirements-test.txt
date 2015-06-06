@@ -2,5 +2,6 @@ coverage
 mock
 nose
 nosexcover
-yanc
+yanc == 0.2.4
 webtest
+-e .

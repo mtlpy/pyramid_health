@@ -6,12 +6,12 @@ Simple healthcheck endpoint for Pyramid, with maintenance mode and application
 checks.
 
 * PyPI: https://pypi.python.org/pypi/pyramid_health
-* Bitbucket: https://bitbucket.org/Ludia/pyramid_health
+* Bitbucket: https://github.com/ludia/pyramid_health
 * |droneio|
 
 .. |droneio| image::
-   https://drone.io/bitbucket.org/Ludia/pyramid_health/status.png
-   :target: https://drone.io/bitbucket.org/Ludia/pyramid_health
+   https://drone.io/github.com/ludia/pyramid_health/status.png
+   :target: https://drone.io/github.com/ludia/pyramid_health
    :alt: Tests on drone.io
 
 

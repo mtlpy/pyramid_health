@@ -6,7 +6,7 @@ Simple healthcheck endpoint for Pyramid, with maintenance mode and application
 checks.
 
 * PyPI: https://pypi.python.org/pypi/pyramid_health
-* Bitbucket: https://github.com/ludia/pyramid_health
+* Github: https://github.com/ludia/pyramid_health
 * |droneio|
 
 .. |droneio| image::

@@ -27,31 +27,31 @@ class TestSimple(unittest.TestCase):
     def test_get(self):
         self.setup()
         response = self.app.get('/health', status=200)
-        self.assertEqual(response.body, 'OK')
+        self.assertEqual(response.body, b'OK')
 
     def test_post(self):
         self.setup()
         response = self.app.post('/health', status=200)
-        self.assertEqual(response.body, 'OK')
+        self.assertEqual(response.body, b'OK')
 
     def test_url_get(self):
         self.setup(url='/whatsup')
         response = self.app.get('/whatsup', status=200)
-        self.assertEqual(response.body, 'OK')
+        self.assertEqual(response.body, b'OK')
 
     def test_get_maintenance_on(self):
         tmpfile = tempfile.NamedTemporaryFile()
         self.setup(disablefile=tmpfile.name)
 
         response = self.app.get('/health', status=299)
-        self.assertEqual(response.body, 'MAINTENANCE')
+        self.assertEqual(response.body, b'MAINTENANCE')
 
     def test_get_maintenance_on_code(self):
         tmpfile = tempfile.NamedTemporaryFile()
         self.setup(disablefile=tmpfile.name, maintenance_code=288)
 
         response = self.app.get('/health', status=288)
-        self.assertEqual(response.body, 'MAINTENANCE')
+        self.assertEqual(response.body, b'MAINTENANCE')
 
     def test_get_maintenance_off(self):
         tmpfile = tempfile.NamedTemporaryFile()
@@ -60,7 +60,7 @@ class TestSimple(unittest.TestCase):
         tmpfile.close()  # Remove the disablefile
 
         response = self.app.get('/health', status=200)
-        self.assertEqual(response.body, 'OK')
+        self.assertEqual(response.body, b'OK')
 
 
 class TestChecks(unittest.TestCase):
@@ -97,18 +97,18 @@ class TestChecks(unittest.TestCase):
         self.check1_status = 'NOK'
 
         response = self.app.get('/health?checks=all', status=503)
-        self.assertEqual(response.body, 'ERROR')
+        self.assertEqual(response.body, b'ERROR')
 
         response = self.app.get('/health?checks=true', status=503)
-        self.assertEqual(response.body, 'ERROR')
+        self.assertEqual(response.body, b'ERROR')
 
         response = self.app.get('/health', status=200)
-        self.assertEqual(response.body, 'OK')
+        self.assertEqual(response.body, b'OK')
 
     def test_ok(self):
         self.setup()
         response = self.app.get('/health?checks=all', status=200)
-        self.assertEqual(response.body, 'OK')
+        self.assertEqual(response.body, b'OK')
 
     def test_check1_nok(self):
         self.setup()
@@ -116,7 +116,7 @@ class TestChecks(unittest.TestCase):
         self.check1_message = 'kaputt!'
 
         response = self.app.get('/health?checks=all', status=503)
-        self.assertEqual(response.body, 'ERROR')
+        self.assertEqual(response.body, b'ERROR')
 
     def test_check2_nok(self):
         self.setup()
@@ -124,7 +124,7 @@ class TestChecks(unittest.TestCase):
         self.check2_message = 'nope'
 
         response = self.app.get('/health?checks=all', status=503)
-        self.assertEqual(response.body, 'ERROR')
+        self.assertEqual(response.body, b'ERROR')
 
     def test_no_message(self):
         self.setup()
@@ -132,7 +132,7 @@ class TestChecks(unittest.TestCase):
         self.check2_message = None
 
         response = self.app.get('/health?checks=all', status=503)
-        self.assertEqual(response.body, 'ERROR')
+        self.assertEqual(response.body, b'ERROR')
 
     def test_all_nok(self):
         self.setup()
@@ -140,7 +140,7 @@ class TestChecks(unittest.TestCase):
         self.check2_status = 'NOK'
 
         response = self.app.get('/health?checks=all', status=503)
-        self.assertEqual(response.body, 'ERROR')
+        self.assertEqual(response.body, b'ERROR')
 
     def test_nok_failure_code(self):
         self.setup(failure_code=500)
@@ -148,4 +148,4 @@ class TestChecks(unittest.TestCase):
         self.check1_status = 'NOK'
 
         response = self.app.get('/health?checks=all', status=500)
-        self.assertEqual(response.body, 'ERROR')
+        self.assertEqual(response.body, b'ERROR')

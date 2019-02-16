@@ -1,7 +1,0 @@
-coverage
-mock
-nose
-nosexcover
-yanc == 0.2.4
-webtest
--e .

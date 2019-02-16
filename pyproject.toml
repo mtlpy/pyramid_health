@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "pyramid_health"
+version = '1.2.1'
+description = "Healthcheck extension for Pyramid"
+authors = ["Pior Bastida <pior@pbastida.net>", "Hadrien David <hadrien@ectobal.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+[tool.poetry.dev-dependencies]
+coverage = "^4.5"
+mock = "^2.0"
+nose = "^1.3"
+nosexcover = "^1.0"
+yanc = "=0.2.4"
+webtest = "^2.0"
+pyramid = "^1.10"
+python-semantic-release = "^4.1"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
